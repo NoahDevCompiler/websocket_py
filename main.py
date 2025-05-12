@@ -5,6 +5,9 @@ import subprocess
 import platform
 import ssl
 
+ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+ssl_context.load_cert_chain(certfile="server.crt", keyfile="private.pem")
+
 def exec_command(command):
     if command == 'open_calc':
         if platform.system() == "Windows":
@@ -26,7 +29,7 @@ async def main():
 
     server = await websockets.serve(handler, "0.0.0.0", 10000, ssl=ssl_context)
     print("Server läuft auf wss://localhost:10000")
-    await server.wait_closed()
+    await asyncio.Future()
 
 if __name__ == '__main__':
     asyncio.run(main())
