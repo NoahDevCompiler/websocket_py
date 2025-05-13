@@ -3,10 +3,6 @@ import websockets
 import os
 import subprocess
 import platform
-import ssl
-
-ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-ssl_context.load_cert_chain(certfile="server.crt", keyfile="private.pem")
 
 def exec_command(command):
     if command == 'open_calc':
@@ -18,16 +14,14 @@ def exec_command(command):
         elif platform.system() == "Linux" or platform.system() == "Darwin":
             os.system("shutdown -h now")
 
-async def handler(websocket, path):
+async def handler(websocket):
+    print("neue Verbindung")
     async for message in websocket:
         print(f"Empfangene Nachricht: {message}")
         exec_command(message)
 
 async def main():
-    ssl_context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
-    ssl_context.load_cert_chain(certfile="server.crt", keyfile="private.pem")
-
-    server = await websockets.serve(handler, "0.0.0.0", 10000, ssl=ssl_context)
+    server = await websockets.serve(handler, "0.0.0.0", 10000)
     print("Server läuft auf wss://localhost:10000")
     await asyncio.Future()
 
